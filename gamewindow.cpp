@@ -5,7 +5,6 @@
 #include <QRandomGenerator>
 #include "obstacle.h"
 #include <QDebug>
-#include <QPixmap>  // Für QPixmap zum Laden des Bildes
 
 GameWindow::GameWindow(QWidget *parent)
     : QWidget(parent),
@@ -16,22 +15,6 @@ GameWindow::GameWindow(QWidget *parent)
 
     // Initiales Hindernis
     obstacles.append(Obstacle(500, 512, 50, 50));  // Erstes Hindernis rechts außerhalb des Bildschirms
-
-    // Das Bild für den Spieler (Deklaration)
-    QPixmap playerImage;
-    // Bild für den Spieler laden
-    playerImage = QPixmap(":/Grafik/Spieler.jpg");  // Stelle sicher, dass der Pfad korrekt ist
-    if (playerImage.isNull()) {
-        qDebug() << "Fehler: Spielerbild konnte nicht geladen werden!";
-    }
-
-    // Das Bild für den Gegner (Deklaration)
-    QPixmap obstacleImage;
-    // Bild für das Hindernis laden
-    obstacleImage = QPixmap(":/Grafik/Gegner.jpg");  // Hindernisbild laden
-    if (obstacleImage.isNull()) {
-        qDebug() << "Fehler: Gegnerbild konnte nicht geladen werden!";
-    }
 }
 
 GameWindow::~GameWindow() {}
@@ -40,33 +23,15 @@ void GameWindow::paintEvent(QPaintEvent *event)
 {
     QPainter Farbe(this); // QPainter ist von Qt selbst
 
-    // Bild für den Hintergrund aus den Ressourcen laden
-    QPixmap background(":/Grafik/Background.png");
-    // Das Bild als Hintergrund zeichnen
-    Farbe.drawPixmap(0, 0, width(), height(), background);  // Das Bild auf die gesamte Fläche skalieren
-
-    // Das Bild für den Spieler (Deklaration)
-    QPixmap playerImage;
-    // Das Bild für den Spieler zeichnen (anstatt des Rechtecks)
-    if (!playerImage.isNull()) {
-        Farbe.drawPixmap(viereckX, viereckY, viereckB, viereckH, playerImage);  // Bild zeichnen
-    }
+    // Zeichne das Viereck (Spieler)und die jeweilige Farbe
+    Farbe.setBrush(Qt::green);
+    Farbe.drawRect(viereckX, viereckY, viereckB, viereckH);
 
     // Zeichne die Hindernisse und die jeweilige Farbe
-    Farbe.setBrush(Qt::green);
+    Farbe.setBrush(Qt::red);
     for (const Obstacle &obstacle : obstacles) {
         Farbe.drawRect(obstacle.getRect());
     }
-
-  /*
-    // Das Bild für das Hindernis zeichnen
-    for (const Obstacle &obstacle : obstacles) {
-        // Hindernis als Bild zeichnen
-        if (!obstacleImage.isNull()) {
-            Farbe.drawPixmap(obstacle.getX(), obstacle.getY(), obstacle.getWidth(), obstacle.getHeight(), obstacleImage);
-        }
-    }
-*/
 }
 
 void GameWindow::keyPressEvent(QKeyEvent *event)
@@ -136,5 +101,3 @@ void GameWindow::timerEvent(QTimerEvent *event)
     }
     update();  // Das Fenster neu zeichnen
 }
-
-
