@@ -22,6 +22,7 @@ protected:
     void timerEvent       (QTimerEvent *event) override;
 
 private:
+
     int  viereckX;              // X-Position des Vierecks
     int  viereckY;              // Y-Position des Vierecks
     int  viereckH;              // Höhe des Vierecks
@@ -32,6 +33,11 @@ private:
     bool onGround;              // Überprüft, ob das Viereck auf dem Boden ist
 
     QList<Obstacle> obstacles;  // Liste der Hindernisse, jetzt Obstacle-Objekte
+    QPixmap playerSprite;  // Sprite für den Spieler
+    bool gamePaused;  // Deklariere die gamePaused-Variable hier
+    // 🆕 Funktion für pixelgenaue Kollisionserkennung
+    bool checkCollisionPixelBased(const QRect &playerRect, const Obstacle &obstacle);
+    void handleCollision(const QRect &playerRect, const Obstacle &obstacle);
 };
 
 #endif // GAMEWINDOW_H
