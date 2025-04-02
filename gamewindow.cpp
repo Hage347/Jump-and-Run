@@ -4,6 +4,7 @@
 #include <QTimerEvent>
 #include "obstacle.h"
 #include <QDebug>
+#include <QPixmap>  // Für QPixmap zum Laden des Bildes
 
 GameWindow::GameWindow(QWidget *parent)
     : QWidget(parent),
@@ -21,6 +22,10 @@ GameWindow::~GameWindow() {}
 void GameWindow::paintEvent(QPaintEvent *event)
 {
     QPainter Farbe(this); // QPainter ist von Qt selbst
+
+    // Hintergrundbild laden und zeichnen
+    QPixmap background(":/graphics/Background/Background_v2-0.png"); // Hier wird das Bild aus Ressourcen geladen
+    Farbe.drawPixmap(0, 0, width(), height(), background); // Das Bild wird auf die ganze Fenstergröße skaliert
 
     // Zeichne das Viereck (Spieler)und die jeweilige Farbe
     Farbe.setBrush(Qt::green);
