@@ -4,14 +4,16 @@
 #include <QTimerEvent>
 #include "obstacle.h"
 #include <QDebug>
+#include <QRect>
 #include <QPixmap>  // Für QPixmap zum Laden des Bildes
 
 GameWindow::GameWindow(QWidget *parent)
     : QWidget(parent),
-    viereckX(100), viereckY(500), viereckB(50), viereckH(50), isJumping(false), geschwindigkeitY(3), onGround(true), geschwindigkeitX(0), gamePaused(false)
+    viereckX(100), viereckY(500), viereckB(50), viereckH(50), isJumping(false), geschwindigkeitY(3), onGround(true), geschwindigkeitX(0), gamePaused(false),
+    plattform{300, 350, 200, 20}
 {
     setFixedSize(1024, 512);  // Setzt die Fenstergröße
-    startTimer(9);  // Geschwindigkeit des Spiels
+    startTimer(15);  // Geschwindigkeit des Spiels
 
 
     // Initiales Hindernis
@@ -50,6 +52,8 @@ void GameWindow::paintEvent(QPaintEvent *event)
         Farbe.setFont(QFont("Arial", 20));
         Farbe.drawText(width() / 2 - 100, height() / 2, "Spiel Pausiert! Drücke 'R' zum Fortsetzen.");
     }
+    Farbe.setBrush(Qt::blue);
+    Farbe.drawRect(plattform);
 }
 
 void GameWindow::keyPressEvent(QKeyEvent *event)
@@ -130,6 +134,11 @@ void GameWindow::timerEvent(QTimerEvent *event)
 
     QRect playerRect(viereckX, viereckY, viereckB, viereckH);
 
+    if (playerRect.intersects(plattform) && geschwindigkeitY > 0) {
+        viereckY = plattform.y() - viereckH; // Spieler landet auf Plattform
+        onGround = true;
+        geschwindigkeitY = 0;
+        isJumping = false;}
     // Überprüfe jede Kollision
     for (const Obstacle &obstacle : obstacles) {
         if (checkCollisionPixelBased(playerRect, obstacle)) {

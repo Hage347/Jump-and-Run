@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QTimerEvent>
 #include <QList>
+#include <QRect>
 #include "obstacle.h"  // Füge die Hindernis-Klasse hinzu
 
 class GameWindow : public QWidget
@@ -38,6 +39,7 @@ private:
     // 🆕 Funktion für pixelgenaue Kollisionserkennung
     bool checkCollisionPixelBased(const QRect &playerRect, const Obstacle &obstacle);
     void handleCollision(const QRect &playerRect, const Obstacle &obstacle);
+    QRect plattform;
 };
 
 #endif // GAMEWINDOW_H
