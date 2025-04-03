@@ -104,8 +104,7 @@ void GameWindow::timerEvent(QTimerEvent *event)
     }
 
     if (!onGround) {
-
-        geschwindigkeitY += 1;          // Schwerkraft anwenden (angepasst)
+        geschwindigkeitY += 1; // Schwerkraft anwenden (angepasst)
     }
 
     viereckY += geschwindigkeitY;
@@ -115,30 +114,41 @@ void GameWindow::timerEvent(QTimerEvent *event)
     if (viereckX < 0) viereckX = 0;
     if (viereckX > width() - viereckB) viereckX = width() - viereckB;
 
+    QRect playerRect(viereckX, viereckY, viereckB, viereckH);
+
     // Überprüfen, ob der Spieler den Boden berührt
     if (viereckY >= height() - 50) {
-
         viereckY = height() - 50;       // Das Viereck darf nicht unter den Boden gehen
-        onGround = true;                // Es steht jetzt auf dem Boden
+        onGround = true;                // Spieler steht auf dem Boden
         geschwindigkeitY = 0;           // Stoppe die Bewegung in Y-Richtung
         isJumping = false;              // Jetzt kann wieder gesprungen werden
     }
 
-    // Bewegungen der Hindernisse
-    for (Obstacle &obstacle : obstacles) {
+    // Überprüfen, ob der Spieler auf der Plattform steht
+    bool playerOnPlatform =
+        playerRect.bottom() >= plattform.y() &&
+        playerRect.bottom() <= plattform.y() + 5 &&
+        playerRect.right() >= plattform.left() &&
+        playerRect.left() <= plattform.right();
 
+    if (playerOnPlatform) {
+        viereckY = plattform.y() - viereckH; // Spieler landet auf der Plattform
+        onGround = true;                     // Spieler steht auf der Plattform
+        geschwindigkeitY = 0;
+        isJumping = false;
+    }
+    // Spieler verlässt die Plattform -> soll wieder fallen
+    else if (onGround && viereckY < height() - 50 && !playerOnPlatform) {
+        onGround = false;
+    }
+
+    // Hindernisse bewegen
+    for (Obstacle &obstacle : obstacles) {
         obstacle.move();                         // Bewege das Hindernis
         obstacle.reset(width(), height());       // Setze es neu, wenn es den Bildschirm verlässt
     }
 
-    QRect playerRect(viereckX, viereckY, viereckB, viereckH);
-
-    if (playerRect.intersects(plattform) && geschwindigkeitY > 0) {
-        viereckY = plattform.y() - viereckH; // Spieler landet auf Plattform
-        onGround = true;
-        geschwindigkeitY = 0;
-        isJumping = false;}
-    // Überprüfe jede Kollision
+    // Überprüfe Kollisionen mit Hindernissen
     for (const Obstacle &obstacle : obstacles) {
         if (checkCollisionPixelBased(playerRect, obstacle)) {
             qDebug() << "💥 Kollision erkannt! Spieler bei:" << viereckX << viereckY
