@@ -12,9 +12,8 @@ GameWindow::GameWindow(QWidget *parent)
     viereckX(100), viereckY(500), viereckB(50), viereckH(50), isJumping(false), geschwindigkeitY(3), onGround(true), geschwindigkeitX(0), gamePaused(false),
     plattform{300, 350, 200, 20}
 {
-    setFixedSize(1024, 512);  // Setzt die Fenstergröße
-    startTimer(15);  // Geschwindigkeit des Spiels
-
+    setFixedSize(1024, 512);        // Setzt die Fenstergröße
+    startTimer(15);                  // wie schnell das Spiel ist
 
     // Initiales Hindernis
     obstacles.append(Obstacle(500, 512, 50, 50));
